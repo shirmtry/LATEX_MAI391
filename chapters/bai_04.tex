@@ -1,0 +1,40 @@
+\section{Hàm chi phí (Cost Function)}
+
+Để đánh giá mức độ sai lệch giữa mô hình dự đoán và dữ liệu thực tế, nhóm sử dụng hàm mất mát toàn phương trung bình (MSE Cost Function). Đối với mô hình hồi quy tuyến tính đơn biến, phương trình hàm giả thuyết được biểu diễn dưới dạng ma trận:
+\begin{equation}
+    f_\theta(\mathbf{x}) = \theta_0 + \theta_1 x_1 = X\theta
+\end{equation}
+
+Hàm chi phí $J(\theta)$ đo lường sai số bình phương trung bình trên tập dữ liệu gồm $n$ quan sát:
+\begin{equation}
+    J(\theta) = \frac{1}{2n}\sum_{i=1}^{n}\left(f_{\theta}(\mathbf{x}^{(i)}) - y^{(i)}\right)^2 = \frac{1}{2n}\|X\theta - y\|_2^2
+\end{equation}
+
+\textbf{Thực nghiệm trên tập huấn luyện (Train set):} Sau khi phân chia dữ liệu, tập huấn luyện có kích thước $n = 43.679$ mẫu. Ma trận thiết kế $X$ có kích thước $(43679 \times 2)$ (đã bổ sung cột bias). Khi khởi tạo tham số ban đầu $\theta_0 = 0$ và $\theta_1 = 0$, mức độ sai lệch ban đầu được hệ thống tính toán là $J(\theta) \approx 92.167$. Mục tiêu của quá trình tối ưu là tìm ra bộ tham số $\theta$ để giảm thiểu giá trị $J(\theta)$ này xuống mức thấp nhất có thể.
+
+
+\section{Cài đặt Gradient Descent}
+
+Gradient Descent (GD) là thuật toán tối ưu hóa lặp, được sử dụng để tìm kiếm điểm cực tiểu địa phương của một hàm khả vi.
+
+\subsection{Quy tắc cập nhật và Đạo hàm}
+Quy tắc cập nhật tham số $\theta$ di chuyển ngược hướng với gradient của hàm chi phí, được kiểm soát bởi tốc độ học (learning rate) $\gamma > 0$:
+\begin{equation}
+    \theta := \theta - \gamma \nabla_{\theta}J(\theta)^\top
+\end{equation}
+
+Trong đó, vector đạo hàm riêng (gradient) được biểu diễn dưới dạng ma trận tối ưu như sau:
+\begin{equation}
+    \nabla_{\theta}J(\theta)^\top = \frac{1}{n}X^\top(X\theta - y)
+\end{equation}
+
+\subsection{Quá trình hội tụ thực nghiệm}
+Nhóm tiến hành cài đặt thuật toán GD trên tập huấn luyện với cấu hình: tốc độ học $\gamma = 0.01$ và giới hạn $1000$ vòng lặp (iterations). Kết quả theo dõi sự thay đổi của hàm chi phí và tham số qua các vòng lặp trọng điểm được ghi nhận như sau:
+
+\begin{itemize}
+    \item \textbf{Giai đoạn đầu (Vòng 1 - 100):} Hàm chi phí $J(\theta)$ giảm rất nhanh từ $92.16$ xuống mức $22.49$. Tham số $\theta_0$ tăng nhanh chóng lên mức $7.68$. Tốc độ giảm sâu này là đặc trưng của GD khi điểm hiện tại đang nằm xa đáy cực tiểu, độ dốc (gradient) lớn nên bước nhảy dài.
+    \item \textbf{Giai đoạn giữa (Vòng 100 - 500):} Tốc độ giảm bắt đầu chậm lại khi hàm chi phí chạm mức $12.43$. Tham số $\theta_0$ vượt ngưỡng $12.18$.
+    \item \textbf{Giai đoạn cuối (Vòng 500 - 1000):} Thuật toán gần như hội tụ hoàn toàn. Sự thay đổi của hàm chi phí trong 500 vòng lặp cuối là cực kỳ nhỏ (chỉ giảm từ $12.431$ xuống $12.424$). Tham số tối ưu cuối cùng chốt lại ở mức: $\theta_0 \approx 12.313$ và $\theta_1 \approx 0.831$.
+\end{itemize}
+
+Việc hàm chi phí tiến sát đến một giá trị giới hạn cố định chứng minh thuật toán đã thành công tìm được nghiệm cực tiểu toàn cục của không gian hồi quy.
