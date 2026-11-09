@@ -1,0 +1,10 @@
+# Bỏ qua các file tạm do LaTeX sinh ra khi biên dịch
+*.aux
+*.log
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.pdf
+*.blg
+*.bbl

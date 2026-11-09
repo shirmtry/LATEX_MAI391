@@ -1,0 +1,162 @@
+\documentclass[12pt,a4paper]{article}
+
+% =========================================================
+% 1. CẤU HÌNH TÀI LIỆU CHUNG
+% =========================================================
+\usepackage[utf8]{vietnam}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{hyperref}
+
+% Cấu hình tài liệu tham khảo với BibLaTeX (Biber)
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{references.bib}
+
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={Computer Project Report},
+    pdfauthor={Group 3}
+}
+
+\onehalfspacing
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{0.3em}
+\setlength{\emergencystretch}{2em}
+
+\renewcommand{\contentsname}{Mục lục}
+
+% Các lệnh tự tạo (giữ nguyên từ file cũ của bạn)
+\newcommand{\canbosung}[1]{%
+    \textcolor{blue}{[Cần bổ sung: #1]}%
+}
+
+\newcommand{\chenhinh}[3]{%
+    \begin{figure}[H]
+        \centering
+        \IfFileExists{#1}{%
+            \includegraphics[width=0.85\textwidth]{#1}
+        }{%
+            \fbox{%
+                \parbox[c][5cm][c]{0.82\textwidth}{%
+                    \centering
+                    \textbf{Vị trí chèn hình}\\[0.5em]
+                    #2\\[0.5em]
+                    Tên tệp: \texttt{\detokenize{#1}}
+                }%
+            }%
+        }
+        \caption{#2}
+        \label{#3}
+    \end{figure}
+}
+
+% =========================================================
+% BẮT ĐẦU TÀI LIỆU
+% =========================================================
+\begin{document}
+
+% =========================================================
+% 2. TRANG BÌA
+% =========================================================
+\begin{titlepage}
+    \centering
+
+    \vspace*{1.5cm}
+
+    {\Large\bfseries MAI391\par}
+
+    \vspace{1.5cm}
+
+    {\Huge\bfseries Computer Project Report\par}
+
+    \vspace{1cm}
+
+    {\Large
+    Hồi quy tuyến tính đơn biến và Gradient Descent
+    trên dữ liệu hiệu năng mạng
+    \par}
+
+    \vspace{1.5cm}
+
+    {\large
+    \textbf{Giảng viên:} Nguyễn Hoàng Tường Vy
+    \par}
+
+    \vspace{0.8cm}
+
+    {\Large\bfseries Group 3\par}
+
+    \vspace{0.5cm}
+
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Họ và tên} & \textbf{Mã số sinh viên} \\
+        \midrule
+        Phan Lê Thanh Hùng & QE210207 \\
+        Đinh Tấn Huy      & QE200063 \\
+        Võ Quốc Tuấn      & QE200052 \\
+        Phan Thành Đạt    & \canbosung{MSSV} \\
+        \bottomrule
+    \end{tabular}
+
+    \vfill
+
+    {\large \today\par}
+\end{titlepage}
+
+% =========================================================
+% 3. MỤC LỤC
+% =========================================================
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+
+\pagenumbering{arabic}
+
+% =========================================================
+% 4. GỌI NỘI DUNG 10 BÀI TỪ THƯ MỤC CHAPTERS
+% (Mỗi thành viên chỉ sửa file tương ứng của mình)
+% =========================================================
+\input{chapters/bai_01} % Giới thiệu bài toán & Bộ dữ liệu
+\input{chapters/bai_02} % Khám phá và trực quan hóa dữ liệu (EDA)
+\input{chapters/bai_03} % Hàm chi phí (Cost Function)
+\input{chapters/bai_04} % Cài đặt Gradient Descent
+\input{chapters/bai_05} % Nghiệm bình phương tối thiểu & Bề mặt hàm chi phí
+\input{chapters/bai_06} % Phân tích hội tụ (Convergence Analysis)
+\input{chapters/bai_07} % Dự đoán, đánh giá mô hình và phân tích phần dư
+\input{chapters/bai_08} % So sánh với thư viện (Scikit-learn)
+\input{chapters/bai_09} % Cải thiện mô hình (Model Improvement)
+\input{chapters/bai_10} % Kết luận (Conclusion)
+
+% =========================================================
+% 5. TÀI LIỆU THAM KHẢO
+% =========================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Tài liệu tham khảo}
+\printbibliography
+
+% =========================================================
+% 6. PHỤ LỤC (Nếu muốn tách riêng có thể tạo chapters/phu_luc.tex)
+% =========================================================
+\clearpage
+\appendix
+\input{chapters/phu_luc} % Chứa mã nguồn và phân công công việc
+
+\end{document}
