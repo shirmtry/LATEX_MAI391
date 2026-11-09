@@ -1,0 +1,58 @@
+% =========================================================
+% BÀI 2: GIỚI THIỆU BỘ DỮ LIỆU (DATASET DESCRIPTION)
+% =========================================================
+\section{Giới thiệu bộ dữ liệu (Dataset Description)}
+
+LocalNet-Dynamics là bộ dữ liệu giám sát hiệu năng mạng theo thời gian, được công bố bởi Alexander Ezharjan (2026) trên Hugging Face~\cite{localnet2026}.
+
+\subsection{Thông tin tổng quan}
+
+\begin{table}[H]
+    \centering
+    \caption{Thông tin tổng quan về bộ dữ liệu}
+    \begin{tabular}{p{0.30\textwidth} p{0.60\textwidth}}
+        \toprule
+        \textbf{Thông tin} & \textbf{Mô tả} \\
+        \midrule
+        Tên bộ dữ liệu & LocalNet-Dynamics \\
+        Số lượng mẫu & 54.617 bản ghi \\
+        Số lượng thuộc tính & 67 cột \\
+        Thời gian thu thập & 20/09/2026--09/10/2026 \\
+        Thời lượng & Khoảng 19 ngày \\
+        Tần suất lấy mẫu & Khoảng 30 giây/lần \\
+        Nguồn dữ liệu &
+        Một máy tính Windows kết nối có dây
+        trong mạng gia đình \\
+        Định dạng & CSV và Parquet \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Các nhóm thuộc tính chính}
+
+\begin{itemize}
+    \item \textbf{Network Latency:}
+    Độ trễ mạng (RTT), độ trễ đến Gateway.
+
+    \item \textbf{Network Stability:}
+    Jitter và tỷ lệ mất gói tin (Packet Loss).
+
+    \item \textbf{Network Services:}
+    Thời gian kết nối TCP, phân giải DNS và phản hồi HTTP.
+
+    \item \textbf{Network Throughput:}
+    Tốc độ tải xuống và tải lên.
+
+    \item \textbf{Temporal Features:}
+    Thời gian, giờ trong ngày, ngày trong tuần.
+
+    \item \textbf{Reference Labels:}
+    Các nhãn tham chiếu về bất thường và suy giảm
+    chất lượng mạng, được tạo theo quy tắc.
+\end{itemize}
+
+\subsection{Đặc điểm và hạn chế}
+
+Dữ liệu có tính chất chuỗi thời gian, chứa các biến động và sự cố mạng thực tế. Tuy nhiên, dữ liệu chỉ được thu thập từ một thiết bị trong một môi trường mạng, đồng thời một số thuộc tính có nhiều giá trị thiếu.
+
+Bộ dữ liệu phù hợp cho các bài toán Regression, Time Series Forecasting và Anomaly Detection. Trong báo cáo này, nhóm tập trung vào hồi quy tuyến tính đơn biến theo yêu cầu của đề bài.
