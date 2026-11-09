@@ -1,0 +1,74 @@
+\subsection{Đánh giá mô hình và so sánh tham số (Console Output)}
+Kết quả huấn luyện và đánh giá trên tập kiểm tra (Test set) cho thấy sự tương đồng gần như tuyệt đối giữa thuật toán Gradient Descent (GD) tự cài đặt và nghiệm giải tích (Analytical Solution).
+\begin{itemize}
+    \item \textbf{Sự hội tụ của tham số:} Tham số thu được từ NumPy GD ($\theta_0 \approx 12.313, \theta_1 \approx 0.831$) khớp đến chữ số thập phân thứ ba so với nghiệm giải tích ($\theta_0 \approx 12.314, \theta_1 \approx 0.830$). Điều này chứng minh thuật toán Gradient Descent đã được lập trình chính xác và hội tụ thành công về điểm cực tiểu toàn cục.
+    \item \textbf{Đánh giá sai số:} Sai số toàn phương trung bình (MSE) của cả hai phương pháp đều đạt mức xấp xỉ $31.35$.
+    \item \textbf{Hệ số xác định ($R^2$):} Mức $R^2 \approx 0.021$ (tức 2.1\%) không phải là lỗi của mô hình, mà phản ánh đúng bản chất của tập dữ liệu thực tế. Biến đầu vào \texttt{gateway\_rtt\_avg\_ms} chỉ giải thích được 2.1\% sự biến thiên của \texttt{rtt\_avg\_ms}. Về mặt vật lý mạng, độ trễ đến gateway nội bộ thường rất nhỏ và ổn định, trong khi tổng độ trễ đến máy chủ đích phụ thuộc chủ yếu vào trạng thái đường truyền Internet bên ngoài. Do đó, việc chỉ dùng gateway RTT để dự đoán tổng RTT sinh ra độ chính xác thấp.
+\end{itemize}
+
+\subsection{Trực quan hóa đường hồi quy và phân tích phần dư}
+\begin{itemize}
+    \item \textbf{Biểu đồ so sánh hồi quy (Regression Comparison):} Hầu hết các điểm dữ liệu thực tế (chấm xanh dương) tập trung cực kỳ dày đặc ở khu vực $x \approx 0$, nhưng giá trị độ trễ thực tế ($y$) tại đó lại phân tán mạnh, có những điểm vọt lên gần $300$ ms. Đường hồi quy tuyến tính bị kéo lệch bởi cụm điểm dày đặc ở trọng tâm (mức $\approx 12$ ms) và nỗ lực bám theo các điểm ngoại lai lác đác ở phía xa ($x \approx 90$), tạo ra độ dốc tương đối thoải $\theta_1 \approx 0.83$.
+    
+    \item \textbf{Hai biểu đồ phần dư (NumPy GD Residuals \& Analytical Residuals):} Hai biểu đồ này có sự phân bố điểm ảnh giống hệt nhau, một lần nữa khẳng định thuật toán GD tự cài đặt đã tìm ra tham số chính xác như công thức toán học.
+    \begin{itemize}
+        \item \textit{Trục hoành (Predicted RTT):} Thể hiện giá trị dự đoán của mô hình ($\hat{y}$). Vì đặc thù dữ liệu đầu vào $x$ (trễ gateway) phần lớn xoay quanh mức $0$ ms, phương trình hồi quy chủ yếu trả về kết quả dự đoán bằng đúng hệ số chặn ($\hat{y} \approx 12.31$ ms). Điều này tạo ra một cột dữ liệu tập trung dày đặc theo chiều dọc ngay tại hoành độ $12$ ms.
+        \item \textit{Trục tung (Residual):} Thể hiện mức độ sai số ($e = y - \hat{y}$). Đường đứt nét màu đỏ ngang mốc $0$ là mức lý tưởng (dự đoán khớp hoàn toàn với thực tế). Tuy nhiên, tại cột mốc dự đoán $12$ ms, phần dư không phân bố đều quanh số $0$ mà kéo vọt lên thành một vệt thẳng đứng tới gần $300$ ms.
+        \item \textit{Ý nghĩa phân tích:} Sự phân bố dị biệt này chứng tỏ phương sai sai số không đồng đều (heteroscedasticity). Về mặt thực tế, khi gateway phản hồi cực nhanh ($0$ ms), mô hình tự tin đoán tổng độ trễ là $12$ ms. Tuy nhiên, gói tin thỉnh thoảng vẫn bị "lag" đột biến lên $300$ ms do nghẽn mạng quốc tế hoặc máy chủ đích. Mô hình không có dữ liệu để lường trước cú lag này, dẫn đến sai số khổng lồ $e \approx 300 - 12 = 288$ ms.
+        \item Ngược lại, một vài điểm ngoại lai nằm rải rác bên phải ($\hat{y} > 40$ ms) lại có phần dư khá nhỏ (bám sát đường màu đỏ). Điều này cho thấy: mô hình chỉ đoán trúng khi bản thân mạng cục bộ (gateway) thực sự bị chậm, nhưng lại hoàn toàn "mù" trước các nguyên nhân gây trễ từ môi trường Internet bên ngoài.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Giải thích hiện tượng trùng khớp đường đồ thị}
+Trên góc phải của biểu đồ Regression Comparison, chú giải (legend) ghi nhận sự tồn tại của hai đường biểu diễn: NumPy GD (màu đỏ) và Analytical (màu xanh lá). Tuy nhiên, trên đồ thị thực tế chỉ quan sát thấy duy nhất đường màu xanh lá. 
+
+Nguyên nhân xuất phát từ việc bộ tham số $\theta$ của hai phương pháp gần như giống hệt nhau, khiến hai đường thẳng có cùng hệ số góc và tung độ gốc, nằm trùng khít lên nhau. Trong mã nguồn trực quan hóa, lệnh vẽ đường Analytical (\texttt{color="green"}) được thực thi ngay sau lệnh vẽ đường NumPy GD (\texttt{color="red"}). Do đó, thư viện Matplotlib đã render lớp màu xanh lá đè lên trên, che khuất hoàn toàn đường hồi quy màu đỏ ở bên dưới.
+
+\subsection{Cơ sở toán học và phương pháp tính toán thông số}
+Toàn bộ các chỉ số đánh giá và dữ liệu vẽ đồ thị được lập trình dựa trên các công thức đại số tuyến tính và thống kê cốt lõi sau:
+\begin{itemize}
+    \item \textbf{Giá trị dự đoán ($\hat{y}$):} Được tính bằng phép nhân ma trận giữa ma trận thiết kế $X$ (đã bổ sung vector cột chứa toàn số $1$) và vector tham số $\theta$:
+    \begin{equation}
+        \hat{y} = X\theta = \theta_0 + \theta_1 x_1
+    \end{equation}
+    \textit{Trong đó:}
+    \begin{itemize}
+        \item $\hat{y}$: Tổng độ trễ dự đoán tới máy chủ đích (\texttt{rtt\_avg\_ms}), đơn vị là mili-giây (ms).
+        \item $X$: Ma trận thiết kế đầu vào (chứa các giá trị $x_1$ và cột số $1$).
+        \item $\theta_0$: Hệ số chặn (Intercept), là giá trị trễ dự đoán khi $x_1 = 0$, đơn vị là ms.
+        \item $\theta_1$: Hệ số góc (Slope), thể hiện sự thay đổi của $\hat{y}$ khi $x_1$ tăng thêm 1 đơn vị.
+        \item $x_1$: Đặc trưng đầu vào độ trễ gateway (\texttt{gateway\_rtt\_avg\_ms}), đơn vị là ms.
+    \end{itemize}
+
+    \item \textbf{Sai số toàn phương trung bình (MSE - Mean Squared Error):} Đo lường trung bình cộng của bình phương các khoảng cách từ điểm dữ liệu thực tế đến đường hồi quy dự đoán:
+    \begin{equation}
+        \text{MSE} = \frac{1}{m} \sum_{i=1}^{m} \left(y^{(i)} - \hat{y}^{(i)}\right)^2
+    \end{equation}
+    \textit{Trong đó:}
+    \begin{itemize}
+        \item $m$: Tổng số lượng mẫu (quan sát) có trong tập dữ liệu kiểm tra (Test set).
+        \item $y^{(i)}$: Giá trị độ trễ thực tế của quan sát thứ $i$, đơn vị là ms.
+        \item $\hat{y}^{(i)}$: Giá trị độ trễ do mô hình dự đoán tại quan sát thứ $i$, đơn vị là ms.
+        \item $\sum_{i=1}^{m}$: Ký hiệu tổng cộng dồn từ quan sát đầu tiên ($i=1$) đến quan sát cuối cùng ($i=m$).
+    \end{itemize}
+
+    \item \textbf{Hệ số xác định ($R^2$ Score):} Đánh giá tỷ lệ phương sai của biến mục tiêu được giải thích bởi mô hình. Chỉ số này so sánh sai số của mô hình hiện tại với sai số giả định nếu chỉ dùng giá trị trung bình $\bar{y}$ để dự đoán:
+    \begin{equation}
+        R^2 = 1 - \frac{\sum_{i=1}^{m} \left(y^{(i)} - \hat{y}^{(i)}\right)^2}{\sum_{i=1}^{m} \left(y^{(i)} - \bar{y}\right)^2}
+    \end{equation}
+    \textit{Trong đó:}
+    \begin{itemize}
+        \item Tử số $\sum (y^{(i)} - \hat{y}^{(i)})^2$: Tổng bình phương phần dư (RSS), thể hiện mức độ sai số của mô hình.
+        \item Mẫu số $\sum (y^{(i)} - \bar{y})^2$: Tổng bình phương toàn phần (TSS), thể hiện mức độ phân tán của dữ liệu gốc.
+        \item $\bar{y}$: Giá trị độ trễ trung bình của toàn bộ các điểm thực tế trong tập kiểm tra, đơn vị là ms.
+    \end{itemize}
+
+    \item \textbf{Phần dư (Residuals):} Là sự chênh lệch trực tiếp giữa giá trị thực tế và giá trị dự đoán, được sử dụng làm tung độ cho hai biểu đồ phân tích phần dư:
+    \begin{equation}
+        e^{(i)} = y^{(i)} - \hat{y}^{(i)}
+    \end{equation}
+    \textit{Trong đó:}
+    \begin{itemize}
+        \item $e^{(i)}$: Mức độ sai lệch (phần dư) của riêng quan sát thứ $i$. Đơn vị là ms. Nếu $e^{(i)} > 0$, mô hình đang dự đoán thấp hơn thực tế; ngược lại nếu $e^{(i)} < 0$, mô hình đang dự đoán cao hơn thực tế.
+    \end{itemize}
+\end{itemize}
