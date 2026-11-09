@@ -1,0 +1,50 @@
+% =========================================================
+% PHẦN 1
+% =========================================================
+\section{Giới thiệu bài toán (Problem Statement)}
+
+Chất lượng kết nối mạng có thể biến động theo thời gian do
+lưu lượng truy cập, tình trạng đường truyền và các yếu tố
+hạ tầng. Những biến động này ảnh hưởng đến độ trễ, mức độ
+ổn định và trải nghiệm của người dùng.
+
+Đề tài tập trung vào bài toán hồi quy (Regression) nhằm
+dự đoán các chỉ số hiệu năng mạng như độ trễ (Latency),
+độ dao động độ trễ (Jitter) hoặc thời gian phản hồi HTTP
+dựa trên dữ liệu giám sát mạng.
+
+Mục tiêu là xây dựng và đánh giá các mô hình Machine Learning
+có khả năng ước lượng những chỉ số này, từ đó hỗ trợ giám sát
+chất lượng kết nối và phát hiện sớm nguy cơ suy giảm hiệu năng.
+
+Trong phạm vi yêu cầu của môn học, nhóm xây dựng mô hình
+\textbf{hồi quy tuyến tính đơn biến}, sử dụng một biến đầu vào
+$x$ để dự đoán một biến mục tiêu $y$:
+\[
+    \hat{y} = f_{\boldsymbol{\theta}}(x)
+    = \theta_0 + \theta_1 x.
+\]
+
+Trong đó $\theta_0$ là hệ số chặn,
+$\theta_1$ là hệ số góc; $x$ và $y$
+đều có đơn vị mili giây (ms).
+
+Thuật toán Gradient Descent được tự cài đặt bằng Python.
+Các thư viện học máy cấp cao chỉ được sử dụng trong phần
+so sánh tùy chọn.
+
+\begin{itemize}
+    \item Biến đầu vào $x$:
+    \texttt{gateway\_rtt\_avg\_ms} --- độ trễ RTT trung bình
+    đến Gateway, đơn vị mili giây (ms).
+    \item Biến mục tiêu $y$:
+    \texttt{rtt\_avg\_ms} --- độ trễ RTT trung bình đến
+    máy chủ đích, đơn vị mili giây (ms).
+    \item Lý do lựa chọn:
+    cả hai đại lượng cùng phản ánh độ trễ mạng và có tương
+    quan dương dự kiến. Độ trễ đến Gateway thường ổn định
+    và dễ đo liên tục; nếu tồn tại quan hệ tuyến tính đủ
+    mạnh, có thể dùng đại lượng dễ đo này để ước lượng độ
+    trễ đến đích mà không phải gửi gói tin đến máy chủ từ
+    xa trong mọi chu kỳ giám sát.
+\end{itemize}
