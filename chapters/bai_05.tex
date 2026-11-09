@@ -1,41 +1,38 @@
 \section{Nghiệm bình phương tối thiểu (Analytical Least-Squares Solution)}
 
-Bên cạnh phương pháp lặp Gradient Descent (GD) dựa trên đạo hàm, bài toán hồi quy tuyến tính còn có thể được giải quyết triệt để bằng phương pháp đại số tuyến tính để tìm ra nghiệm chính xác tuyệt đối (closed-form solution). 
+Bên cạnh phương pháp lặp Gradient Descent (GD) dựa trên đạo hàm, bài toán hồi quy tuyến tính còn có thể được giải quyết triệt để bằng phương pháp giải tích.
 
 \subsection{Cơ sở toán học: Phương trình chuẩn (Normal Equations)}
-Mục tiêu của tối ưu hóa là tìm điểm cực tiểu của hàm chi phí $J(\theta)$. Theo nguyên lý vi tích phân, tại điểm cực tiểu, đạo hàm của hàm chi phí theo vector tham số $\theta$ phải bằng 0. 
-
-Cho đạo hàm $\nabla_{\theta}J(\theta) = 0$, ta thu được hệ Phương trình chuẩn (Normal Equations):
+Mục tiêu của tối ưu hóa là tìm điểm cực tiểu của hàm chi phí $J(\theta)$. Theo nguyên lý tích phân, tại điểm cực tiểu, đạo hàm của hàm chi phí bằng 0[span_0](start_span)[span_0](end_span):
 \begin{equation}
-    (X^\top X)\theta = X^\top y \implies \theta^* = (X^\top X)^{-1} X^\top y
+\nabla_{\theta} J(\theta) = 0 \implies \theta_{LS} = (X^T X)^{-1} X^T y
 \end{equation}
 
-\textit{Trong đó:}
+\noindent\textbf{Trong đó:}
 \begin{itemize}
-    \item $X$: Ma trận thiết kế chứa các đặc trưng đầu vào (kích thước $m \times (n+1)$).
+    \item $X$: Mã trận thiết kế chứa các đặc trưng đầu vào (kích thước $m \times (n+1)$).
     \item $y$: Vector cột chứa các giá trị thực tế của biến mục tiêu.
-    \item $\theta^*$: Vector tham số tối ưu toán học.
-    \item $(X^\top X)^{-1}$: Ma trận nghịch đảo của tích $X^\top X$.
+    \item $\theta_{LS}$: Vector tham số tối ưu toán học[span_1](start_span)[span_1](end_span).
+    \item $(X^T X)^{-1}$: Ma trận nghịch đảo của tích $X^T X$.
 \end{itemize}
-Việc tính toán $\theta^*$ thông qua phương trình này mang lại nghiệm chính xác ngay trong một bước tính toán duy nhất, không cần chọn learning rate ($\gamma$) hay lặp nhiều vòng như thuật toán GD. Nhóm đã sử dụng hàm \texttt{np.linalg.inv} của thư viện NumPy để lập trình phép tính ma trận nghịch đảo này.
+Việc tính toán $\theta_{LS}$ thông qua phương trình này mang lại nghiệm chính xác ngay trong một bước tính toán duy nhất, không cần lặp.
 
 \subsection{Kết quả thực nghiệm và So sánh tham số}
-Để kiểm chứng tính chính xác của thuật toán Gradient Descent tự cài đặt ở phần trước, nhóm tiến hành tính toán nghiệm giải tích trên cùng tập huấn luyện (Train set) và xuất ra kết quả so sánh. Từ Console Output, ta có những phân tích chuyên sâu sau:
+Để kiểm chứng tính chính xác của thuật toán Gradient Descent từ cài đặt ở phần trước, nhóm tiến hành tính toán nghiệm giải tích[span_2](start_span)[span_2](end_span):
 
 \begin{itemize}
     \item \textbf{Về bộ tham số tối ưu ($\theta$):}
     \begin{itemize}
-        \item Nghiệm từ Gradient Descent (sau 1000 vòng lặp): $\theta_0 \approx 12.3131, \theta_1 \approx 0.8314$
-        \item Nghiệm Giải tích (Nghiệm đúng): $\theta_0 \approx 12.3146, \theta_1 \approx 0.8309$
+        \item Nghiệm từ Gradient Descent (sau $1000$ vòng lặp): $\theta_0 \approx 12.3131$, $\theta_1 \approx 0.8214$[span_3](start_span)[span_3](end_span)
+        \item Nghiệm Giải tích (Nghiệm đúng): $\theta_0 \approx 12.3146$, $\theta_1 \approx 0.8309$[span_4](start_span)[span_4](end_span)
     \end{itemize}
-    \textbf{Giải thích ý nghĩa:} Hai bộ tham số này gần như trùng khớp hoàn toàn, chỉ chênh lệch ở chữ số thập phân thứ 3. Sự chênh lệch siêu nhỏ này xuất phát từ bản chất của phương pháp: Gradient Descent là thuật toán \textit{tối ưu lặp (tiệm cận)}. Thuật toán dừng lại ở vòng lặp 1000 khi tham số đã "bò" xuống rất sát đáy lòng chảo; trong khi đó, Phương trình chuẩn sử dụng ma trận nghịch đảo để nhảy thẳng tới tâm đáy \textit{chính xác tuyệt đối về mặt toán học}.
-    
-    \item \textbf{Về sai lệch hàm chi phí (Cost Difference = 1.11e-06):}
-    Hệ thống ghi nhận sự chênh lệch giá trị Cost ($J(\theta)$) giữa hai phương pháp là \texttt{1.11e-06} (tức là $0.00000111$). Con số này thực chất là độ lệch giữa mức sai số của GD (khi dừng ở vòng 1000) so với mức sai số lý tưởng toán học.
-    \\
-    \textbf{Nguyên nhân và Kết luận:} Mức chênh lệch $1.11 \times 10^{-6}$ này là một giá trị cực kỳ nhỏ (gần bằng $0$). Điều này minh chứng hùng hồn cho hai yếu tố quan trọng:
+    \item \textbf{Về sai lệch hàm chi phí (Cost Difference = $1.1\text{e}-06$):}
+    \begin{itemize}
+        \item Hệ thống ghi nhận sự chênh lệch giá trị Cost $J(\theta)$ giữa hai phương pháp là $1.1\text{e}-06$ (tức là $0.000001183$)[span_5](start_span)[span_5](end_span).
+    \end{itemize}
+    \item \textbf{Nguyên nhân và Kết luận:} Mức chênh lệch $1.1 \times 10^{-6}$ này là một giá trị cực kỳ nhỏ (gần bằng $0$). Điều này chứng tỏ:
     \begin{enumerate}
-        \item Thuật toán Gradient Descent mà nhóm tự lập trình từ đầu (scratch) hoạt động hoàn toàn chính xác.
-        \item Các siêu tham số (Hyperparameters) được cấu hình trong GD bao gồm learning rate $\gamma = 0.01$ và $1000$ vòng lặp là cực kỳ hợp lý, vừa đủ để thuật toán hội tụ mượt mà về đúng điểm cực tiểu toàn cục của hàm mất mát, không bị văng (phân kỳ) cũng không bị dừng quá sớm.
+        \item Thuật toán Gradient Descent mà nhóm tự lập từ đầu (scratch) hoạt động hoàn toàn chính xác[span_6](start_span)[span_6](end_span).
+        \item Các siêu tham số (Hyperparameters) được cấu hình trong GD bao gồm learning rate $\gamma = 0.01$ và giới hạn $1000$ vòng lặp đã đạt hiệu quả hội tụ tối ưu[span_7](start_span)[span_7](end_span).
     \end{enumerate}
 \end{itemize}
