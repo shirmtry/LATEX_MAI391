@@ -1,0 +1,57 @@
+% =========================================================
+% BÀI 1: GIỚI THIỆU BÀI TOÁN VÀ BỘ DỮ LIỆU
+% =========================================================
+\section{Giới thiệu bài toán và Bộ dữ liệu}
+
+\subsection{Đặt vấn đề}
+Nhằm đáp ứng yêu cầu số 1 của đồ án môn học: \textit{"Thu thập một bộ dữ liệu thứ cấp phù hợp (real-world secondary dataset) về một chủ đề liên quan đến công nghệ, chứa tối thiểu 500 quan sát"}, nhóm đã lựa chọn bộ dữ liệu giám sát hiệu năng mạng từ thực tế (Network Telemetry). 
+
+Chất lượng kết nối mạng có thể biến động theo thời gian do lưu lượng truy cập, tình trạng đường truyền và các yếu tố hạ tầng. Những biến động này ảnh hưởng trực tiếp đến độ trễ (Latency), mức độ ổn định và trải nghiệm của người dùng. 
+
+Mục tiêu của bài toán là dự đoán **độ trễ trung bình khi gửi và nhận gói tin tới máy chủ đích** (Round Trip Time - RTT) dựa trên các đặc trưng về mạng và thời gian. Trong phạm vi bài báo cáo này, nhóm tập trung xây dựng mô hình hồi quy tuyến tính đơn biến, sử dụng duy nhất một đặc trưng đầu vào để dự đoán độ trễ.
+
+\subsection{Định nghĩa Input và Output}
+
+Bài toán được thiết lập với một biến độc lập (Input) và một biến phụ thuộc (Output) như sau:
+
+\begin{table}[H]
+    \centering
+    \caption{Định nghĩa các biến trong mô hình}
+    \begin{tabular}{llp{0.5\textwidth}}
+        \toprule
+        \textbf{Loại biến} & \textbf{Tên cột (Feature)} & \textbf{Ý nghĩa} \\
+        \midrule
+        \textbf{INPUT (X)} & \texttt{gateway\_rtt\_avg\_ms} & Độ trễ trung bình tới Gateway (mili giây - ms) \\
+        \addlinespace
+        \textbf{OUTPUT (Y)} & \texttt{rtt\_avg\_ms} & Độ trễ trung bình khi gửi và nhận gói tin tới máy chủ đích (ms) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textbf{Lý do lựa chọn:} Cả hai đại lượng cùng phản ánh độ trễ mạng và có tương quan dương dự kiến. Độ trễ đến Gateway thường ổn định và dễ đo liên tục; nếu tồn tại quan hệ tuyến tính đủ mạnh, có thể dùng đại lượng dễ đo này để ước lượng độ trễ đến đích mà không phải gửi gói tin đến máy chủ từ xa trong mọi chu kỳ giám sát.
+
+\subsection{Thu thập và tải dữ liệu}
+
+Dữ liệu được thu thập từ bộ dữ liệu thứ cấp (định dạng CSV) lưu trữ trên Google Drive. Tệp dữ liệu chứa hơn \(54\,000\) quan sát (dòng), hoàn toàn thỏa mãn điều kiện tối thiểu \(500\) quan sát của đề bài. 
+
+Quá trình tải và trích xuất dữ liệu được tự động hóa bằng ngôn ngữ Python (sử dụng thư viện \texttt{gdown} và \texttt{pandas}). Đoạn mã cốt lõi thực hiện tải dữ liệu và khai báo biến được minh họa như sau:
+
+\begin{verbatim}
+import gdown
+import pandas as pd
+
+# Tải file từ Google Drive
+file_id = '1RgrGtIgDJQiuYjxZ3WSxESXdaZztoj9T'
+download_path = 'dataset.csv'
+gdown.download(id=file_id, output=download_path, quiet=False)
+
+# Đọc dữ liệu
+df = pd.read_csv(download_path)
+print(f"Kích thước dữ liệu: {df.shape[0]} dòng, {df.shape[1]} cột.")
+
+# Khai báo biến
+X_feature = ['gateway_rtt_avg_ms']
+target_y = 'rtt_avg_ms'
+\end{verbatim}
+
+Sau khi tải thành công, nhóm tiến hành kiểm tra sự tồn tại của các cột \texttt{gateway\_rtt\_avg\_ms} và \texttt{rtt\_avg\_ms} để đảm bảo dữ liệu sẵn sàng cho các bước tiền xử lý và phân tích khám phá (EDA) tiếp theo.
