@@ -1,0 +1,28 @@
+% =========================================================
+% BÀI 7: PHÂN TÍCH HỘI TỤ (CONVERGENCE ANALYSIS)
+% =========================================================
+\section{Convergence analysis}
+
+\subsection{Mục tiêu}
+Đánh giá tốc độ hội tụ của thuật toán Gradient Descent thông qua việc biểu diễn giá trị hàm chi phí \(J(\boldsymbol{\theta})\) theo số vòng lặp (iterations). Đồng thời, thực hiện so sánh thực nghiệm để lựa chọn ra tốc độ học (Learning Rate - LR) tối ưu nhất.
+
+\subsection{Kết quả thực hiện}
+
+% Nhớ lưu ảnh biểu đồ đường (Learning Rate) vào thư mục figures/ với đúng tên dưới đây
+\chenhinh{figures/07.jpg}
+{Giá trị hàm chi phí theo số vòng lặp với các mức Learning Rate khác nhau}
+{fig:convergence}
+
+\subsection{Phân tích chi tiết}
+Để tìm ra Learning Rate phù hợp nhất, nhóm đã tiến hành chạy thực nghiệm thuật toán với 3 mức LR khác nhau: \(0.001\), \(0.01\) và \(0.1\) trên cùng \(3000\) vòng lặp. Kết quả được thể hiện qua 3 đường trên biểu đồ:
+
+\begin{itemize}
+    \item \textbf{LR = 0.001 (Đường màu đỏ - Quá chậm):} Đường cong Cost giảm từ từ với độ dốc thấp. Sau \(3000\) vòng lặp, giá trị Cost vẫn chưa chạm tới mức tối ưu (đường nét đứt đen). Điều này cho thấy LR quá nhỏ khiến mô hình học quá chậm và lãng phí tài nguyên tính toán.
+    
+    \item \textbf{LR = 0.1 (Đường màu xanh lá - Quá nhanh):} Mô hình lao dốc cực nhanh và chạm đáy chỉ sau khoảng \(100\) vòng lặp đầu tiên. Tuy nhiên, bước nhảy quá lớn (large step size) tiềm ẩn rủi ro dao động mạnh (zig-zag) hoặc phân kỳ (văng ra ngoài không gian nghiệm) nếu dữ liệu đầu vào không được chuẩn hóa tốt.
+    
+    \item \textbf{LR = 0.01 (Đường màu xanh dương - Tối ưu):} Đây là mức Learning Rate được nhóm lựa chọn. Đường cong Cost giảm rất nhanh nhưng vẫn giữ được độ mượt mà, không bị dao động. Kết quả phân tích bằng thuật toán quét cho thấy, mô hình đạt mức tối ưu (sai số \(< 0.001\) so với Normal Equation) ngay tại vòng lặp thứ \(617\).
+\end{itemize}
+
+\subsection{Kết luận}
+Việc lựa chọn Learning Rate ảnh hưởng trực tiếp đến hiệu suất của mô hình. Với dữ liệu đã được chuẩn hóa (StandardScaler), LR = 0.01 là sự cân bằng hoàn hảo nhất giữa tốc độ hội tụ và tính ổn định. Thuật toán Gradient Descent đã hội tụ hoàn toàn với sai lệch Cost so với nghiệm giải tích chỉ còn \(0.00 \times 10^0\) (gần như bằng 0 tuyệt đối).
