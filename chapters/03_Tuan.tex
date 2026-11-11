@@ -1,28 +1,36 @@
 \section{Khám phá và trực quan hóa dữ liệu (Exploratory Data Analysis)}
 
-\subsection{Tiền xử lý và kết xuất dữ liệu (Data Preparation \& Export)}
-Quy trình tiền xử lý được thực hiện nhằm đảm bảo chất lượng dữ liệu trước khi đưa vào huấn luyện. Các bước bao gồm: chuyển đổi kiểu dữ liệu sang dạng số, loại bỏ các hàng chứa giá trị rỗng (NaN) và lọc bỏ các giá trị âm không hợp lệ về mặt vật lý (thời gian trễ $<0$). Kết quả, từ $54.617$ mẫu ban đầu, nhóm thu được tập dữ liệu sạch gồm $54.599$ quan sát. 
+\subsection{Tiền xử lý và kết xuất dữ liệu}
+Quy trình tiền xử lý tiến hành loại bỏ các hàng rỗng (NaN) và các giá trị âm không hợp lý (thời gian trễ $\ge 0$). Tổng số mẫu hợp lệ giữ lại được đưa vào quá trình phân tích EDA.
 
-\subsection{Phân bố dữ liệu và giải quyết ngoại lai (Distribution \& Outliers)}
-Để phân tích kỹ hơn theo chuẩn thống kê, nhóm thực hiện vẽ biểu đồ hộp (Boxplot) cho các biến đầu vào. Quan sát cho thấy dữ liệu hiệu năng mạng có độ lệch phải (right-skewed) cực kỳ mạnh. Hầu hết các quan sát tập trung ở vùng giá trị rất nhỏ (ví dụ: \texttt{gateway\_rtt} đa số bằng $0$), nhưng lại xuất hiện nhiều điểm ngoại lai (outliers) vọt lên hàng trăm mili-giây.
+\subsection{Phân bố dữ liệu và giải quyết ngoại lai (Outliers)}
+Thông qua biểu đồ phân bố (Boxplot), dữ liệu độ trễ mạng thể hiện rõ đặc tính lệch phải (right-skewed). Các điểm ngoại lai (outliers) xuất hiện dày đặc ở giá trị cao. Tuy nhiên, nhóm quyết định \textbf{không loại bỏ} các điểm này. 
+Lập luận: Trong bối cảnh mạng máy tính, các điểm đột biến (lag/nghẽn mạng) phản ánh hiện trạng thực tế của môi trường Internet thay vì là lỗi thu thập dữ liệu. Giữ lại outliers giúp mô hình học được các tác động khách quan.
 
-\textbf{Giải quyết Outliers:} Thay vì loại bỏ bằng các phương pháp chuẩn (như IQR hay Z-score) để ép dữ liệu về phân phối chuẩn, nhóm quyết định \textbf{giữ lại toàn bộ các ngoại lai này}. Lập luận: Trong bối cảnh mạng máy tính, các điểm "outliers" không phải là lỗi đo lường, mà đại diện cho các sự cố giật lag, nghẽn mạng thực tế. Việc cắt bỏ chúng sẽ làm mất đi bản chất của bài toán.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/eda_distributions.png}
+    \caption{Biểu đồ Boxplot thể hiện phân bố và các điểm ngoại lai của 4 đặc trưng}
+\end{figure}
 
-\subsection{Phân tích tương quan và Lựa chọn đặc trưng (Feature Selection)}
-Dựa trên ma trận tương quan Pearson giữa 4 đặc trưng mạng và biến mục tiêu (\texttt{rtt\_avg\_ms}), kết quả thu được:
+\subsection{Phân tích tương quan và Lựa chọn đặc trưng}
+Phân tích tương quan Pearson trên 4 đặc trưng mạng cho kết quả:
 \begin{itemize}
-    \item \texttt{tcp\_connect\_median\_ms}: $r \approx 0.2459$ (Tương quan cao nhất)
+    \item \texttt{tcp\_connect\_median\_ms}: $r \approx 0.2459$ (Cao nhất)
     \item \texttt{gateway\_rtt\_avg\_ms}: $r \approx 0.1977$
     \item \texttt{dns\_recursive\_ms}: $r \approx 0.0401$
-    \item \texttt{dns\_resolve\_ms}: $r \approx 0.0299$
 \end{itemize}
-
-\textbf{Lý giải việc chọn biến:} Dù \texttt{tcp\_connect} có hệ số $r$ cao nhất, nó đo lường quá trình "bắt tay" TCP đến tận máy chủ đích, chịu cùng tác động định tuyến như tổng độ trễ. Ngược lại, nhóm chọn \textbf{\texttt{gateway\_rtt\_avg\_ms}} (tốc độ đến bộ định tuyến trong nhà). Biến này đóng vai trò như một đường cơ sở (baseline) để kiểm định giả thuyết: \textit{"Sự ổn định của mạng nội bộ có thể giải thích được bao nhiêu phần trăm sự ổn định của Internet quốc tế?"}
+Mặc dù \texttt{tcp\_connect} có hệ số cao nhất do đo lường quá trình "bắt tay" đến tận đích, nhóm vẫn chọn \texttt{gateway\_rtt\_avg\_ms} làm biến đầu vào cơ sở (baseline). Lý do: Độ trễ Gateway phản ánh tốc độ cục phát mạng nội bộ. Việc chọn biến này giúp kiểm chứng giả thuyết mạng nội bộ cực mượt nhưng mạng quốc tế vẫn bị đứt gãy.
 
 \subsection{Trực quan hóa quan hệ giữa các biến (Scatter Plots)}
-Biểu đồ phân tán cho biến \texttt{gateway\_rtt\_avg\_ms} thể hiện một sự phân bố đứt gãy dạng hình chữ "L" vô cùng đặc trưng:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Task2_Compare_4_Features_ScatterPlots.png}
+    \caption{Biểu đồ phân tán so sánh 4 đặc trưng đầu vào với Tổng độ trễ}
+\end{figure}
+
+Đáng chú ý nhất trên biểu đồ của \texttt{gateway\_rtt\_avg\_ms} là sự phân bố tụ tập thành \textbf{hình chữ "L" đứt gãy}:
 \begin{itemize}
-    \item \textbf{Cột thẳng đứng tại $x=0$:} Có tới 25.221 mẫu (46.19\%) có độ trễ gateway bằng $0$ ms (mạng nội bộ cực tốt), nhưng tổng độ trễ thực tế ($y$) lại phân tán tạo thành vệt kéo dài lên tới $300$ ms. Điều này phản ánh các nguyên nhân gây trễ hoàn toàn đến từ môi trường ngoài luồng (đứt cáp quang biển, trạm quốc tế).
-    \item \textbf{Đáy ngang của chữ L:} Nhóm điểm bám theo trục hoành, phản ánh tình huống khi mạng quốc tế ổn định, tổng độ trễ sẽ phụ thuộc tuyến tính vào mạng nội bộ.
+    \item \textbf{Cột thẳng đứng tại $x=0$:} Hàng ngàn điểm dữ liệu có Gateway RTT gần bằng 0 (mạng nội bộ cực mượt) nhưng Tổng độ trễ (trục y) lại vọt lên $200-300$ ms. Đây là minh chứng vật lý của việc đứt cáp quang biển.
+    \item \textbf{Đáy ngang:} Tổng độ trễ phụ thuộc tuyến tính vào tín hiệu Gateway khi đường truyền quốc tế bình thường.
 \end{itemize}
-Sự phân bố bất đối xứng này báo trước rằng mô hình tuyến tính đơn biến sẽ gặp sai số lớn ở phần sau.
