@@ -1,0 +1,28 @@
+\section{Dự đoán, đánh giá mô hình và phân tích phần dư}
+
+\subsection{Dự đoán với tham số tối ưu}
+Với bộ tham số thu được từ thuật toán Gradient Descent, mô hình dự đoán giá trị mới dựa trên phương trình: $\hat{y}_{new} = \theta_{0}^{*} + \theta_{1}^{*} x_{new}$.
+
+\subsection{Đường hồi quy tối ưu}
+Trực quan hóa đường hồi quy so với dữ liệu thực tế cho thấy, đường thẳng $y = 12.31 + 0.83x$ nằm ở khoảng giữa "đám mây" dữ liệu. Hệ số góc $\theta_1 \approx 0.83$ mang ý nghĩa: Khi độ trễ Gateway tăng $1$ ms, độ trễ đích dự báo tăng xấp xỉ $0.83$ ms. Đường thẳng không thể đi qua hầu hết các điểm do sự phân tán mạnh của dữ liệu (cột ngoại lai tại $x=0$).
+
+\subsection{Các chỉ số đánh giá (Model Metrics)}
+Để đo lường chất lượng dự đoán, nhóm sử dụng hai chỉ số cốt lõi: Sai số toàn phương trung bình (MSE) và Hệ số xác định ($R^2$ Score). Kết quả thu được trên tập kiểm tra (Test Set) gồm hơn $10.900$ mẫu như sau:
+
+\begin{itemize}
+    \item \textbf{Mean Squared Error (MSE): $\approx 31.35$}. Mức sai số này cho thấy phương sai của độ lệch giữa dự đoán và thực tế là khá lớn.
+    \item \textbf{R-squared ($R^2$ Score): $\approx 0.021$ (2.1\%)}. Chỉ số này có ý nghĩa thống kê cực kỳ quan trọng. 
+\end{itemize}
+
+\textbf{Nhấn mạnh hiệu năng mô hình:} Việc $R^2$ chỉ đạt 2.1\% \textbf{hoàn toàn không phải do thuật toán Gradient Descent cài đặt sai}. Như đã đối chiếu ở phần trước, thuật toán hội tụ chính xác về nghiệm toán học. Con số 2.1\% này phản ánh một đặc trưng vật lý khách quan của mạng: \textit{Biến đầu vào Gateway RTT chỉ có khả năng giải thích được 2.1\% sự biến thiên của tổng độ trễ; 97.9\% sai số còn lại là do các tác động ngẫu nhiên từ mạng Internet quốc tế (outliers) mà mô hình đơn biến không thể nhìn thấy được.}
+
+\subsection{Phân tích phần dư (Residual Analysis)}
+Phân tích phần dư $e^{(i)} = y^{(i)} - \hat{y}^{(i)}$ là công cụ mạnh mẽ nhất để xác định xem mô hình hồi quy tuyến tính có vi phạm các giả định thống kê cơ bản hay không.
+
+Quan sát biểu đồ phân tán giữa \textit{Giá trị dự đoán (Predicted RTT)} và \textit{Phần dư (Residual)}, ta nhận thấy những đặc điểm bất thường:
+\begin{enumerate}
+    \item \textbf{Sự mất đồng nhất của phương sai (Heteroscedasticity):} Phần dư không phân bố ngẫu nhiên và đối xứng quanh trục $0$ (đường đứt nét màu đỏ). Thay vào đó, do phần lớn đầu vào gateway xấp xỉ $0$, mô hình liên tục đưa ra dự đoán an toàn là $\hat{y} \approx 12.3$ ms. 
+    \item \textbf{Vệt thẳng đứng khổng lồ:} Tại hoành độ dự đoán $\sim 12.3$ ms, giá trị phần dư đâm vọt lên tạo thành một vệt thẳng đứng kéo dài tới gần $300$ ms. 
+\end{enumerate}
+
+\textbf{Đúc kết:} Hiện tượng trên chứng tỏ rằng, mặc dù mô hình dự đoán trễ thấp, thực tế mạng vẫn xuất hiện các cú lag đột biến (ví dụ đứt cáp quang). Sự giới hạn của mô hình đơn biến tại Mục 9 này là tiền đề mang tính quyết định, tạo động lực để nhóm tiến hành các bước Cải thiện mô hình (Model Improvement) bằng cách bổ sung thêm đặc trưng (đa biến) và áp dụng các thuật toán phi tuyến tính ở các phần tiếp theo của báo cáo.
