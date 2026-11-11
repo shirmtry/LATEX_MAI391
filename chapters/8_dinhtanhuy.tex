@@ -1,0 +1,36 @@
+% =========================================================
+% BÀI 7: PHÂN TÍCH HỘI TỤ (CONVERGENCE ANALYSIS)
+% =========================================================
+\section{Phân tích hội tụ (Convergence Analysis)}
+
+\subsection{Mục tiêu}
+Đánh giá tốc độ hội tụ của thuật toán Gradient Descent thông qua việc biểu diễn giá trị hàm chi phí \(J(\theta)\) theo số vòng lặp (iterations). Đồng thời, thực hiện so sánh thực nghiệm để lựa chọn ra tốc độ học (Learning Rate - LR) tối ưu nhất.
+
+\subsection{Kết quả thực hiện}
+
+% Lưu ý: Đổi tên file ảnh cho khớp với thư mục figures của bạn
+\chenhinh{8.jpg}
+{So sánh tốc độ hội tụ với các Learning Rate khác nhau}
+{fig:convergence}
+
+\subsection{Phân tích chi tiết}
+
+Để tìm ra Learning Rate phù hợp nhất, nhóm đã tiến hành chạy thực nghiệm thuật toán với 3 mức LR khác nhau: \(0.001\), \(0.01\) và \(0.1\) trên cùng \(3000\) vòng lặp. Kết quả được thể hiện qua 3 đường trên biểu đồ:
+
+\begin{itemize}
+    \item \textbf{LR = 0.001 (Đường màu đỏ - Quá chậm):} Đường cong Cost giảm từ từ với độ dốc thấp. Sau \(3000\) vòng lặp, giá trị Cost vẫn chưa chạm tới mức tối ưu (đường nét đứt đen). Điều này cho thấy LR quá nhỏ khiến mô hình học quá chậm và lãng phí tài nguyên tính toán.
+    
+    \item \textbf{LR = 0.1 (Đường màu xanh lá - Quá nhanh):} Mô hình lao dốc cực nhanh và chạm đáy chỉ sau khoảng \(100\) vòng lặp đầu tiên. Tuy nhiên, bước nhảy quá lớn (large step size) tiềm ẩn rủi ro dao động mạnh (zig-zag) hoặc phân kỳ (văng ra ngoài không gian nghiệm) nếu dữ liệu đầu vào không được chuẩn hóa tốt.
+    
+    \item \textbf{LR = 0.01 (Đường màu xanh dương - Tối ưu):} Đây là mức Learning Rate được nhóm lựa chọn. Đường cong Cost giảm rất nhanh nhưng vẫn giữ được độ mượt mà, không bị dao động. 
+\end{itemize}
+
+\textbf{Kết quả chi tiết từ quá trình thực nghiệm (Console Output):}
+\begin{itemize}
+    \item \textbf{Điểm bắt đầu (Vòng 0):} Với \(\theta_0 = 0, \theta_1 = 0\), giá trị hàm chi phí là \(92.167763\).
+    \item \textbf{Điểm kết thúc (Vòng 1000):} Thuật toán đạt bộ tham số \(\theta_0 = 12.313184\) và \(\theta_1 = 0.831447\), kéo giá trị Cost giảm mạnh xuống chỉ còn \(12.424097\).
+    \item \textbf{So sánh với nghiệm giải tích:} Nghiệm giải tích (Normal Equation) cho ra Cost là \(12.424096\). Sai lệch cuối cùng (Delta Cost) giữa Gradient Descent và nghiệm toán học chỉ là \(0.000001\) (\(10^{-6}\)). Sự sai lệch cực nhỏ về tham số (\(\Delta\theta_0 \approx 0.0015\), \(\Delta\theta_1 \approx 0.0005\)) càng khẳng định tính đúng đắn của thuật toán.
+\end{itemize}
+
+\subsection{Kết luận}
+Việc lựa chọn Learning Rate ảnh hưởng trực tiếp đến hiệu suất của mô hình. Với dữ liệu đã được chuẩn hóa (StandardScaler), LR = \(0.01\) là sự cân bằng hoàn hảo nhất giữa tốc độ hội tụ và tính ổn định. Thuật toán Gradient Descent đã hội tụ hoàn toàn với sai lệch Cost so với nghiệm giải tích chỉ còn \(0.00 \times 10^0\) (tương đương \(0.000001\)), chứng minh code tự viết đã hoạt động chính xác tuyệt đối.

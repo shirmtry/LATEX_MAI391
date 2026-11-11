@@ -9,7 +9,7 @@ Phần này nhằm mục đích trực quan hóa hình dáng của hàm chi phí
 \subsection{Kết quả thực hiện}
 
 % Lưu ý: Bạn nhớ lưu bức ảnh 3D + 2D vào thư mục figures/ với tên bai_06_landscape.png nhé
-\chenhinh{figures/06.jpg}
+\chenhinh{6.jpg}
 {Đồ thị 3D bề mặt hàm chi phí và Đồ thị 2D đường đồng mức (Contour)}
 {fig:cost_landscape}
 
@@ -18,9 +18,9 @@ Phần này nhằm mục đích trực quan hóa hình dáng của hàm chi phí
 \begin{itemize}
     \item \textbf{Không gian hàm chi phí:} Qua đồ thị 3D, ta có thể thấy hàm chi phí \(J(\boldsymbol{\theta})\) có dạng lòng chén (Paraboloid lồi). Đặc tính này đảm bảo rằng bài toán Hồi quy tuyến tính đơn biến với hàm Cost MSE luôn tồn tại một cực tiểu toàn cục duy nhất, do đó thuật toán Gradient Descent sẽ không bao giờ bị kẹt ở cực tiểu địa phương.
     
-    \item \textbf{Quỹ đạo tối ưu hóa (GD Trajectory):} Đường màu đỏ thể hiện quá trình cập nhật tham số với \texttt{learning\_rate = 0.01} qua \(5000\) vòng lặp. Xuất phát từ điểm \(\boldsymbol{\theta} = [0,0]\) (nơi có giá trị Cost rất cao, khoảng \(92.38\)), quỹ đạo di chuyển mượt mà, men theo lòng chén và hội tụ về tâm một cách nhanh chóng.
+    \item \textbf{Quỹ đạo tối ưu hóa (GD Trajectory):} Đường màu đỏ thể hiện quá trình cập nhật tham số với \texttt{learning\_rate = 0.01} qua \(1000\) vòng lặp. Xuất phát từ điểm \(\boldsymbol{\theta} = [0,0]\) (nơi có giá trị Cost rất cao, khoảng \(92.167\)), quỹ đạo di chuyển mượt mà, men theo lòng chén và hội tụ về tâm một cách nhanh chóng. Kết thúc quá trình, bộ tham số đạt \(\theta_0 \approx 12.313\) và \(\theta_1 \approx 0.831\).
     
-    \item \textbf{Tính chính xác của mô hình:} Dấu X màu vàng là nghiệm giải tích (True Minimum) được tính từ phương trình chuẩn (Normal Equation) với giá trị Cost tối ưu là \(14.2574\). Điểm kết thúc của quỹ đạo Gradient Descent đã đè khít lên dấu X vàng. Điều này chứng minh thuật toán GD tự viết đã hoạt động chính xác tuyệt đối, tìm ra bộ tham số tương đương với nghiệm toán học.
+    \item \textbf{Tính chính xác của mô hình:} Dấu X màu vàng là nghiệm giải tích (True Minimum) được tính từ phương trình chuẩn (Normal Equation) với giá trị Cost tối ưu là \(12.424096\). Điểm kết thúc của quỹ đạo Gradient Descent (với Cost là \(12.424097\)) đã đè khít lên dấu X vàng. Điều này chứng minh thuật toán GD tự viết đã hoạt động chính xác tuyệt đối, tìm ra bộ tham số tương đương với nghiệm toán học với sai lệch Cost cuối cùng (Delta Cost) chỉ là \(0.000001\) (\(10^{-6}\)), và sai lệch tham số \(\Delta\theta_0 \approx 0.0015\), \(\Delta\theta_1 \approx 0.0005\).
     
     \item \textbf{Tính chất vuông góc:} Trên đồ thị 2D Contour, các đường đồng mức (Contour lines) thể hiện các mức Cost khác nhau. Quỹ đạo màu đỏ luôn cắt vuông góc (\(90^\circ\)) với các đường đồng mức. Điều này hoàn toàn khớp với lý thuyết: vector Gradient \(\nabla J(\boldsymbol{\theta})\) luôn vuông góc với đường đồng mức của hàm số tại điểm đó. 
     
