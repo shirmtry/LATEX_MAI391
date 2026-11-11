@@ -1,0 +1,21 @@
+\section{Kết luận (Conclusion)}
+
+\subsection{Kết quả đạt được}
+Dự án đã triển khai thành công bài toán hồi quy tuyến tính từ những bước cơ bản nhất đến việc áp dụng các mô hình máy học nâng cao. Các kết quả chính đã đạt được bao gồm:
+\begin{itemize}
+    \item \textbf{Hiểu và cài đặt thuật toán cốt lõi:} Nhóm đã tự cài đặt thành công Hàm chi phí (Cost Function) và thuật toán Gradient Descent (GD) từ đầu bằng Python, đồng thời đối chiếu chính xác với nghiệm giải tích bình phương tối thiểu (Analytical Least-Squares).
+    \item \textbf{Đánh giá toàn diện:} Thông qua việc trực quan hóa bề mặt hàm chi phí, quỹ đạo tối ưu và phân tích hội tụ, nhóm đã chứng minh được tính đúng đắn của Gradient Descent khi lựa chọn tốc độ học (learning rate) phù hợp.
+    \item \textbf{So sánh và cải thiện mô hình:} Mô hình cơ bản được so sánh với thư viện Scikit-learn. Hơn nữa, nhóm đã cải thiện đáng kể hiệu năng dự đoán bằng cách mở rộng sang mô hình đa biến và áp dụng các thuật toán mạnh mẽ hơn như Cây quyết định (Decision Tree) và XGBoost. Việc tích hợp Momentum vào Gradient Descent cũng giúp quá trình hội tụ diễn ra ổn định và nhanh chóng hơn.
+\end{itemize}
+
+\subsection{Hạn chế và hướng phát triển}
+Mặc dù đạt được những kết quả khả quan, dự án vẫn còn một số hạn chế nhất định:
+\begin{itemize}
+    \item \textbf{Về dữ liệu:} Bộ dữ liệu sử dụng vẫn còn giới hạn về số lượng mẫu và các đặc trưng. Mô hình chưa được kiểm chứng trên các tập dữ liệu có tính đa dạng cao hơn hoặc có nhiều nhiễu (outliers).
+    \item \textbf{Về mô hình:} Mặc dù các mô hình cây và boosting (như XGBoost) cho kết quả tốt, nhóm chưa đi sâu vào việc tối ưu hóa siêu tham số (Hyperparameter Tuning) một cách triệt để bằng Grid Search hay Random Search. 
+    \item \textbf{Về đánh giá:} Các chỉ số đánh giá chủ yếu dựa trên tập kiểm tra tĩnh, chưa áp dụng các kỹ thuật Cross-Validation để đảm bảo tính tổng quát hóa cao nhất.
+\end{itemize}
+\textbf{Hướng phát triển tiếp theo:} Nhóm đề xuất thu thập thêm dữ liệu thực tế, thử nghiệm thêm các kỹ thuật Regularization (L1/L2) cho mô hình tuyến tính, và triển khai mô hình lên một ứng dụng web đơn giản (ví dụ: dùng Streamlit) để người dùng có thể tương tác và dự đoán trực tiếp.
+
+\subsection{Kết luận chung}
+Dự án MAI391 đã mang lại cái nhìn sâu sắc từ lý thuyết đến thực hành về Học máy. Việc tự tay xây dựng Gradient Descent giúp nhóm hiểu rõ bản chất toán học đằng sau các thư viện "hộp đen" như Scikit-learn. Sự kết hợp giữa kỹ thuật tối ưu cơ bản và các mô hình Ensemble hiện đại đã minh chứng cho quy trình phát triển một dự án Khoa học Dữ liệu hoàn chỉnh. Đây là nền tảng vững chắc để các thành viên trong nhóm tiếp tục nghiên cứu và ứng dụng AI vào các bài toán thực tế sau này.
