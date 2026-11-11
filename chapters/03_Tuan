@@ -39,3 +39,32 @@ Từ Hình \ref{fig:scatter_4features}, ta có thể phân tích chi tiết bả
     
     \item \textbf{Đặc trưng \texttt{dns\_resolve\_ms} và \texttt{dns\_recursive\_ms} (Hàng dưới):} Hai biểu đồ này thể hiện sự phân tán ngẫu nhiên, không có hình khối cụ thể. Hệ số tương quan cực kỳ thấp ($r < 0.05$) khẳng định thời gian phân giải tên miền (DNS) diễn ra độc lập và hiếm khi là nguyên nhân chính ảnh hưởng đến tổng độ trễ truyền tải của cả gói tin.
 \end{itemize}
+
+\section{Khám phá và trực quan hóa dữ liệu (Exploratory Data Analysis)}
+
+\subsection{Tiền xử lý và kết xuất dữ liệu (Data Preparation \& Export)}
+Quy trình tiền xử lý được thực hiện nhằm đảm bảo chất lượng dữ liệu trước khi đưa vào huấn luyện. Các bước bao gồm: chuyển đổi kiểu dữ liệu sang dạng số (numeric), loại bỏ các hàng chứa giá trị rỗng (Missing values/NaN) và lọc bỏ các giá trị âm không hợp lệ về mặt vật lý (thời gian trễ không thể $<0$). Kết quả, từ $54.617$ mẫu ban đầu, nhóm thu được tập dữ liệu sạch gồm $54.599$ quan sát. Dữ liệu này được kết xuất ra tệp \texttt{data\_univariate\_clean.csv} phục vụ cho huấn luyện.
+
+\subsection{Phân bố dữ liệu và giải quyết ngoại lai (Distribution \& Outliers Analysis)}
+Để phân tích kỹ hơn theo chuẩn thống kê, nhóm thực hiện vẽ biểu đồ hộp (Boxplot) cho các biến đầu vào. Quan sát cho thấy dữ liệu hiệu năng mạng có độ lệch phải (right-skewed) cực kỳ mạnh. Hầu hết các quan sát tập trung ở vùng giá trị rất nhỏ (ví dụ: \texttt{gateway\_rtt} đa số bằng $0$), nhưng lại xuất hiện nhiều điểm ngoại lai (outliers) vọt lên hàng trăm, thậm chí hàng ngàn mili-giây.
+
+\textbf{Giải quyết Outliers:} Thay vì loại bỏ bằng các phương pháp chuẩn (như IQR hay Z-score) để ép dữ liệu về phân phối chuẩn, nhóm quyết định \textbf{giữ lại toàn bộ các ngoại lai dương này}. Lập luận: Trong bối cảnh mạng máy tính, các điểm "outliers" không phải là lỗi đo lường, mà chúng đại diện cho các sự cố giật lag, nghẽn mạng hoặc đứt cáp thực tế. Việc cắt bỏ chúng sẽ làm mất đi bản chất của bài toán dự đoán hiệu năng.
+
+\subsection{Phân tích tương quan và Lựa chọn đặc trưng (Feature Selection)}
+Dựa trên ma trận tương quan Pearson giữa 4 đặc trưng mạng và biến mục tiêu (\texttt{rtt\_avg\_ms}), kết quả thu được:
+\begin{itemize}
+    \item \texttt{tcp\_connect\_median\_ms}: $r \approx 0.2459$ (Tương quan cao nhất)
+    \item \texttt{gateway\_rtt\_avg\_ms}: $r \approx 0.1977$
+    \item \texttt{dns\_recursive\_ms}: $r \approx 0.0401$
+    \item \texttt{dns\_resolve\_ms}: $r \approx 0.0299$
+\end{itemize}
+
+\textbf{Lý giải việc chọn biến:} Dù \texttt{tcp\_connect} có hệ số $r$ cao nhất, nó đo lường quá trình "bắt tay" TCP đến tận máy chủ đích, nghĩa là nó chịu cùng tác động định tuyến như biến mục tiêu tổng độ trễ. Nếu dùng nó để dự báo thì mô hình thiếu tính ứng dụng thực tiễn. Ngược lại, nhóm chọn \textbf{\texttt{gateway\_rtt\_avg\_ms}} (tốc độ đến bộ định tuyến trong nhà). Biến này đóng vai trò như một đường cơ sở (baseline) hoàn hảo để kiểm định giả thuyết: \textit{"Sự ổn định của mạng nội bộ có thể giải thích được bao nhiêu phần trăm sự ổn định của kết nối Internet quốc tế?"}
+
+\subsection{Trực quan hóa quan hệ giữa các biến (Scatter Plots)}
+Biểu đồ phân tán (Scatter Plot) cho biến \texttt{gateway\_rtt\_avg\_ms} thể hiện một sự phân bố đứt gãy dạng hình chữ "L" vô cùng đặc trưng:
+\begin{itemize}
+    \item \textbf{Cột thẳng đứng tại $x=0$:} Có tới gần 50\% số mẫu có độ trễ gateway bằng $0$ ms (mạng nội bộ cực tốt), nhưng tổng độ trễ thực tế ($y$) lại phân tán mạnh, tạo thành vệt kéo dài lên tới $300$ ms. Điều này phản ánh các nguyên nhân gây trễ hoàn toàn đến từ môi trường ngoài luồng (nhà cung cấp ISP, cáp quang biển).
+    \item \textbf{Đáy ngang của chữ L:} Một nhóm điểm bám theo trục hoành, phản ánh tình huống khi mạng quốc tế ổn định, tổng độ trễ sẽ phụ thuộc tuyến tính vào chất lượng mạng nội bộ.
+\end{itemize}
+Sự phân bố bất đối xứng này (Heteroscedasticity) báo trước rằng mô hình tuyến tính đơn biến sẽ gặp khó khăn lớn và tạo ra phần dư lớn tại trọng tâm đồ thị.
