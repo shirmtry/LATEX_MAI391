@@ -1,20 +1,23 @@
 \section{Dự đoán, đánh giá mô hình và phân tích phần dư}
-
 \subsection{Đường hồi quy tối ưu và Các chỉ số đánh giá}
 Đường thẳng hồi quy tối ưu thu được là $ \hat{y} = 12.31 + 0.83x $. Hiệu năng của mô hình trên tập kiểm tra được đánh giá qua các chỉ số:
 \begin{itemize}
-    \item \textbf{Sai số toàn phương trung bình (MSE):} $31.35$ ms$^2$
-    \item \textbf{Hệ số xác định ($R^2$ Score):} $\approx 2.1\%$
+\item \textbf{Sai số toàn phương trung bình (MSE):} $31.35$ ms$^2$
+\item \textbf{Hệ số xác định ($R^2$ Score):} $\approx 2.1\%$
 \end{itemize}
+\textbf{Nhấn mạnh hiệu năng mô hình:}
+Con số $R^2 = 2.1\%$ thoạt nhìn khá khiêm tốn. \textbf{Tuy nhiên, đây không phải là lỗi do thuật toán}. Thuật toán đã tối ưu thành công hàm Loss về sát nghiệm toán học. Con số $2.1\%$ này phản ánh \textbf{thực trạng khách quan của mạng lưới}: Mạng nội bộ (Gateway) không thể giải thích toàn bộ sự biến thiên của tổng độ trễ quốc tế. Lên đến $97.9\%$ sai số hoàn toàn đến từ ngẫu nhiên bên ngoài môi trường mạng nội bộ.
 
-\textbf{Nhấn mạnh hiệu năng mô hình:} 
-Con số $R^2 = 2.1\%$ thoạt nhìn khá khiêm tốn. \textbf{Tuy nhiên, đây không phải là lỗi do thuật toán}. Thuật toán đã tối ưu thành công hàm Loss về sát nghiệm toán học. Con số $2.1\%$ này phản ánh \textbf{thực trạng khách quan của mạng lưới}: Mạng nội bộ (Gateway) không thể giải thích sự biến thiên của tổng độ trễ quốc tế. Lên đến $97.9\%$ sai số hoàn toàn đến từ ngẫu nhiên bên ngoài môi trường mạng.
-
-\subsection{Phân tích phần dư (Residual Analysis)}
+\subsection{Phân tích phần dư và So sánh thuật toán}
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/residual_plot.png}
-    \caption{Biểu đồ phần dư theo giá trị dự đoán RTT}
+\centering
+% Lưu ý: Thay tên file 'regression_and_residuals.png' cho đúng với tên ảnh 3-in-1 mà anh đã lưu ở Colab
+\includegraphics[width=1\textwidth]{figures/regression_and_residuals.png}
+\caption{So sánh đường hồi quy (trái) và biểu đồ phần dư của Gradient Descent (giữa), Nghiệm giải tích (phải)}
 \end{figure}
-
-Đồ thị sơ đồ phần dư cho thấy các sai số xuất hiện \textbf{một vệt thẳng đứng khổng lồ} tại mức dự đoán $\hat{y} \approx 12.3$ ms. Đây là những gói tin có tốc độ ở nhà hoàn hảo, nhưng ra quốc tế bị nghẽn dẫn đến phần dư dương vọt lên tới $300$ ms. Điều này củng cố việc sử dụng mô hình đa biến (Multivariate) ở các phần tiếp theo để dự đoán chính xác hơn.
+\textbf{Nhận xét từ biểu đồ:}
+\begin{itemize}
+    \item \textbf{Biểu đồ so sánh đường hồi quy (Regression Comparison):} Cả hai phương pháp Gradient Descent (đỏ) và Normal Equation (xanh) đều cho ra kết quả dự đoán \textbf{trùng khớp hoàn toàn với nhau}, chứng tỏ thuật toán GD đã hội tụ tuyệt đối về nghiệm tối ưu toàn cục.
+    \item \textbf{Biểu đồ phần dư (Residuals):} Đồ thị sơ đồ phần dư cho thấy các sai số xuất hiện \textbf{một vệt thẳng đứng khổng lồ} tại mức dự đoán $\hat{y} \approx 12.3$ ms. Đây là những gói tin có tốc độ ở nhà hoàn hảo (Gateway RTT thấp), nhưng ra quốc tế bị nghẽn (Lag/Loss) dẫn đến phần dư dương vọt lên tới gần $300$ ms. 
+\end{itemize}
+Điều này củng cố mạnh mẽ luận điểm: Chỉ dùng một biến \textit{gateway\_rtt\_avg\_ms} là không đủ để bao quát bức tranh toàn cảnh, việc phát triển mô hình đa biến (Multivariate) ở các phần tiếp theo là vô cùng cấp thiết.
