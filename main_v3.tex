@@ -1,0 +1,246 @@
+\documentclass[12pt,a4paper]{article}
+
+% =========================================================
+% 1. CẤU HÌNH TÀI LIỆU CHUNG
+% =========================================================
+\usepackage[utf8]{vietnam}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\graphicspath{{figures/}{./}}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{hyperref}
+
+% Cấu hình tài liệu tham khảo với BibLaTeX (Biber)
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{references.bib}
+
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={Computer Project Report},
+    pdfauthor={Group 3}
+}
+
+\onehalfspacing
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{0.3em}
+\setlength{\emergencystretch}{2em}
+
+\renewcommand{\contentsname}{Mục lục}
+
+% Các lệnh tự tạo (giữ nguyên từ file cũ của bạn)
+\newcommand{\canbosung}[1]{%
+    \textcolor{blue}{[Cần bổ sung: #1]}%
+}
+
+\newcommand{\chenhinh}[3]{%
+    \begin{figure}[H]
+        \centering
+        \IfFileExists{#1}{%
+            \includegraphics[width=0.85\textwidth]{#1}
+        }{%
+            \fbox{%
+                \parbox[c][5cm][c]{0.82\textwidth}{%
+                    \centering
+                    \textbf{Vị trí chèn hình}\\[0.5em]
+                    #2\\[0.5em]
+                    Tên tệp: \texttt{\detokenize{#1}}
+                }%
+            }%
+        }
+        \caption{#2}
+        \label{#3}
+    \end{figure}
+}
+
+% =========================================================
+% BẮT ĐẦU TÀI LIỆU
+% =========================================================
+\begin{document}
+
+% =========================================================
+% 2. TRANG BÌA
+% =========================================================
+\begin{titlepage}
+    \centering
+
+    \vspace*{1.5cm}
+
+    {\Large\bfseries MAI391\par}
+
+    \vspace{1.5cm}
+
+    {\Huge\bfseries Computer Project Report\par}
+
+    \vspace{1cm}
+
+    {\Large
+    Hồi quy tuyến tính đơn biến và Gradient Descent
+    trên dữ liệu hiệu năng mạng
+    \par}
+
+    \vspace{1.5cm}
+
+    {\large
+    \textbf{Giảng viên:} Nguyễn Hoàng Tường Vy
+    \par}
+
+    \vspace{0.8cm}
+
+    {\Large\bfseries Group 3\par}
+
+    \vspace{0.5cm}
+
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Họ và tên} & \textbf{Mã số sinh viên} \\
+        \midrule
+        Phan Lê Thanh Hùng & QE210207 \\
+        Đinh Tấn Huy      & QE200063 \\
+        Võ Quốc Tuấn      & QE200052 \\
+        Phan Thành Đạt    & QE200132  \\
+        \bottomrule
+    \end{tabular}
+
+    \vfill
+
+    {\large \today\par}
+\end{titlepage}
+
+% =========================================================
+% 3. MỤC LỤC
+% =========================================================
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+
+\pagenumbering{arabic}
+
+% =========================================================
+% 4. GỌI NỘI DUNG 10 FILE CHƯƠNG HIỆN CÓ
+% =========================================================
+\input{chapters/01_gioithieubaitoan.tex}
+\input{chapters/2_dinhtanhuy.tex}
+\input{chapters/03_Tuan.tex}
+\input{chapters/04_hamchiphi.tex}
+
+% =========================================================
+% MỤC 6 -- VIẾT TRỰC TIẾP TẠI ĐÂY
+% =========================================================
+\section{Nghiệm bình phương tối thiểu (Analytical Least-Squares Solution)}
+\label{sec:least-squares}
+
+Bên cạnh phương pháp lặp Gradient Descent, bài toán hồi quy
+tuyến tính còn được giải trực tiếp bằng nghiệm bình phương
+tối thiểu. Với ma trận thiết kế $X$ (cột đầu toàn số $1$) và
+vector mục tiêu $y$, nghiệm giải tích thu được từ phương
+trình chuẩn:
+\[
+    (X^{T}X)\,w = X^{T}y
+    \quad\Longrightarrow\quad
+    w = (X^{T}X)^{-1}X^{T}y .
+\]
+Mục này trình bày cơ sở toán học của phương trình chuẩn,
+cách cài đặt nghiệm giải tích bằng NumPy và kết quả so sánh
+với nghiệm do Gradient Descent tìm được.
+
+% Giữ nguyên toàn bộ nội dung file 05; chỉ ẩn dòng \section trùng lặp
+% và loại bỏ các nhãn rác dạng [span_N](start_span) do sao chép văn bản.
+\begingroup
+\renewcommand{\section}[1]{}
+\catcode`\[=\active
+\def[#1](#2){}
+\input{chapters/05_caidat_gradient_descent.tex}
+\endgroup
+
+\input{chapters/7_dinhtanhuy.tex}
+\input{chapters/8_dinhtanhuy.tex}
+\input{chapters/09. Tuan.tex}
+\input{chapters/10_trienkhai_sklearn.tex}
+\input{chapters/11_caithienmodel.tex}
+
+% =========================================================
+% MỤC 12 -- VIẾT TRỰC TIẾP TẠI ĐÂY
+% =========================================================
+\section{Kết luận (Conclusion)}
+\label{sec:conclusion}
+
+\subsection{Kết quả đạt được}
+
+Trong bài computer project, nhóm đã xây dựng quy trình hồi quy
+tuyến tính hoàn chỉnh cho bài toán dự đoán độ trễ mạng từ dữ liệu
+LocalNet-Dynamics~\cite{localnet2026}: mô tả và khám phá dữ liệu,
+định nghĩa hàm chi phí MSE, cài đặt Gradient Descent bằng NumPy,
+tính nghiệm bình phương tối thiểu, phân tích hội tụ và đánh giá
+trên tập kiểm tra.
+
+Thuật toán Gradient Descent tự cài đặt hội tụ về nghiệm giải
+tích: hệ số chặn $\theta_0 \approx 12.313$, hệ số góc
+$\theta_1 \approx 0.831$, tương ứng Test MSE $31.3520$ và
+$R^2 \approx 0.0210$. Kết quả này xác nhận phần cài đặt toán
+học là chính xác; hệ số xác định thấp phản ánh việc riêng
+Gateway RTT không giải thích được phần lớn biến thiên của
+tổng RTT.
+
+Khi mở rộng lên bốn đặc trưng mạng, nhóm so sánh chín mô hình
+trên cùng một tập kiểm tra $10\,918$ mẫu. Decision Tree
+Regressor đạt kết quả tốt nhất với Test MSE $16.3844$ và
+$R^2 = 0.5431$; XGBoost và AdaBoost lần lượt đạt $20.5236$ và
+$21.5279$. Nhóm tuyến tính đa biến (Scikit-learn LR, Ridge,
+Lasso, NumPy GD with Momentum) đạt Test MSE khoảng $31.86$,
+thấp hơn hai mô hình đơn biến ($34.9155$ và $34.9150$) nhưng
+vẫn cao hơn các mô hình phi tuyến.
+
+\subsection{So sánh với thư viện và hành vi của XGBoost}
+
+Scikit-learn Linear Regression cho kết quả dự đoán gần như
+trùng khớp với NumPy GD trên bài toán đơn biến, trong khi thời
+gian huấn luyện trung vị thấp hơn khoảng $43.54$ lần. Với dữ
+liệu đa biến, mô hình này đóng vai trò mốc tham chiếu OLS cho
+nhóm tuyến tính.
+
+XGBoost thể hiện lợi thế khi quy mô dữ liệu huấn luyện tăng:
+Validation MSE giảm từ $18.3136$ ở mức $20\%$ xuống $14.4839$
+ở mức $100\%$ training pool. Tuy nhiên, tại mức $10\%$ mô hình
+overfit rõ rệt (Training MSE $6.2210$ so với Validation MSE
+$27.5821$), và trên tập kiểm tra cuối cùng XGBoost xếp sau
+Decision Tree. Kết quả cho thấy ưu thế trên validation không
+bảo đảm thứ hạng giữ nguyên trên một tập đánh giá độc lập.
+
+\subsection{Hạn chế và hướng phát triển}
+
+Kết quả hiện tại được ghi nhận với một phép chia dữ liệu và
+một bộ siêu tham số cố định. Decision Tree còn biến động khi
+thành phần dữ liệu huấn luyện thay đổi, còn $R^2$ của nhóm
+tuyến tính vẫn ở mức khiêm tốn. Ngoài ra, dữ liệu mạng có bản
+chất chuỗi thời gian nên phép chia ngẫu nhiên có thể để lọt
+thông tin giữa train và test.
+
+Các bước tiếp theo gồm: kiểm tra độ ổn định trên nhiều phép
+chia và nhiều hạt giống, lựa chọn siêu tham số bằng
+cross-validation, đánh giá theo thứ tự thời gian, và bổ sung
+các đặc trưng mạng khác ngoài bốn biến đã dùng.
+
+% =========================================================
+% 5. TÀI LIỆU THAM KHẢO
+% =========================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Tài liệu tham khảo}
+\printbibliography
+
+\end{document}
